@@ -1,6 +1,0 @@
-# ninja log v5
-0	64	6572470422092710	CMakeFiles/cam.dir/src/cam.c.obj	64aec4bbefc3e28
-65	134	6572470422788287	cam.lib	304fe9733576f7bc
-0	6	0	clean	8c45b54705a541e8
-0	173	6572472768748114	CMakeFiles/cam.dir/src/cam.c.obj	64aec4bbefc3e28
-173	204	6572472769049878	cam.lib	304fe9733576f7bc
