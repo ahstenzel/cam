@@ -36,11 +36,11 @@
 # define CAM_ARCH_UNKNOWN
 #endif
 
-//#define CAM_LEGACY
+
 /* SIMD Definitions */
 #if defined(CAM_ARCH_X86) || defined(CAM_ARCH_X64) && !defined(CAM_LEGACY)
 # define CAM_SIMD_AVX
-#include <zmmintrin.h>
+#include <immintrin.h>
 
 #elif defined(CAM_ARCH_ARM) || defined(CAM_ARCH_ARM64) && !defined(CAM_LEGACY)
 # define CAM_SIMD_NEON
