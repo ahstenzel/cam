@@ -69,7 +69,7 @@
 #define C_PI_2     1.57079632679489661923   // pi/2
 #define C_PI_4     0.785398163397448309616  // pi/4
 #define C_SQRT2    1.41421356237309504880   // sqrt(2)
-#define C_SQRT1_2  0.707106781186547524401  // 1/sqrt(2)
+#define C_1_SQRT2  0.707106781186547524401  // 1/sqrt(2)
 
 // Useful functions
 #define radtodeg(a) (a * (180.0 / C_PI))

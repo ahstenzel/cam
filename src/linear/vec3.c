@@ -1,15 +1,15 @@
 /*
- * vec2.c
- * Declaration for 2D vector of floats.
+ * vec3.c
+ * Declaration for 3D vector of floats.
  */
 
-#include "cam/linear/vec2.h"
+#include "cam/linear/vec3.h"
 
-vec2 vec2_make(float x, float y) {
-  vec2 v;
+vec3 vec3_make(float x, float y, float z) {
+  vec3 v;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  v.data = _mm_set_ps(0.0f, 0.0f, y, x);
+  v.data = _mm_set_ps(0.0f, z, y, x);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
 
@@ -17,14 +17,14 @@ vec2 vec2_make(float x, float y) {
   // No SIMD intrinsics
   v->data[0] = x;
   v->data[1] = y;
-  v->data[2] = 0.0f;
+  v->data[2] = z;
   v->data[3] = 0.0f;
 #endif
   return v;
 }
 
-vec2 vec2_makez() {
-  vec2 v;
+vec3 vec3_makez() {
+  vec3 v;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   v.data = _mm_setzero_ps();
@@ -41,7 +41,7 @@ vec2 vec2_makez() {
   return v;
 }
 
-float vec2_getx(vec2* v) {
+float vec3_getx(vec3* v) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   return _mm_cvtss_f32(v->data);
@@ -54,7 +54,7 @@ float vec2_getx(vec2* v) {
 #endif
 }
 
-float vec2_gety(vec2* v) {
+float vec3_gety(vec3* v) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_shuffle_ps(v->data, v->data, 1);
@@ -68,7 +68,21 @@ float vec2_gety(vec2* v) {
 #endif
 }
 
-void vec2_setx(vec2* v, float x) {
+float vec3_getz(vec3* v) {
+#if defined(CAM_SIMD_AVX)
+  // Intel AVX
+  __m128 tmp = _mm_shuffle_ps(v->data, v->data, 2);
+  return _mm_cvtss_f32(tmp);
+#elif defined(CAM_SIMD_NEON)
+  // AMD NEON
+
+#else
+  // No SIMD intrinsics
+  return v->data[2];
+#endif
+}
+
+void vec3_setx(vec3* v, float x) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_set_ps(0.0f, 0.0f, 0.0f, x);
@@ -82,7 +96,7 @@ void vec2_setx(vec2* v, float x) {
 #endif
 }
 
-void vec2_sety(vec2* v, float y) {
+void vec3_sety(vec3* v, float y) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_set_ps(0.0f, 0.0f, y, 0.0f);
@@ -96,7 +110,21 @@ void vec2_sety(vec2* v, float y) {
 #endif
 }
 
-bool vec2_equal(vec2* a, vec2* b) {
+void vec3_setz(vec3* v, float z) {
+#if defined(CAM_SIMD_AVX)
+  // Intel AVX
+  __m128 tmp = _mm_set_ps(0.0f, z, 0.0f, 0.0f);
+  v->data = _mm_blend_ps(v->data, tmp, 0b0100);
+#elif defined(CAM_SIMD_NEON)
+  // AMD NEON
+
+#else
+  // No SIMD intrinsics
+  v->data[2] = z;
+#endif
+}
+
+bool vec3_equal(vec3* a, vec3* b) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 vcmp = _mm_cmp_ps(a->data, b->data, _CMP_EQ_OQ);
@@ -108,11 +136,12 @@ bool vec2_equal(vec2* a, vec2* b) {
 #else
   // No SIMD intrinsics
   return (a->data[0] == b->data[0] && 
-          a->data[1] == b->data[1]);
+          a->data[1] == b->data[1] &&
+          a->data[2] == b->data[2]);
 #endif
 }
 
-bool vec2_equalz(vec2* v) {
+bool vec3_equalz(vec3* v) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 vcmp = _mm_cmp_ps(v->data, _mm_setzero_ps(), _CMP_EQ_OQ);
@@ -124,12 +153,13 @@ bool vec2_equalz(vec2* v) {
 #else
   // No SIMD intrinsics
   return (v->data[0] == 0.0f && 
-          v->data[1] == 0.0f);
+          v->data[1] == 0.0f &&
+          v->data[2] == 0.0f);
 #endif
 }
 
-vec2 vec2_add(vec2* a, vec2* b) {
-  vec2 r;
+vec3 vec3_add(vec3* a, vec3* b) {
+  vec3 r;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   r.data = _mm_add_ps(a->data, b->data);
@@ -140,12 +170,13 @@ vec2 vec2_add(vec2* a, vec2* b) {
   // No SIMD intrinsics
   r.data[0] = a->data[0] + b->data[0];
   r.data[1] = a->data[1] + b->data[1];
+  r.data[2] = a->data[2] + b->data[2];
 #endif
   return r;
 }
 
-vec2 vec2_sub(vec2* a, vec2* b) {
-  vec2 r;
+vec3 vec3_sub(vec3* a, vec3* b) {
+  vec3 r;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   r.data = _mm_sub_ps(a->data, b->data);
@@ -156,12 +187,13 @@ vec2 vec2_sub(vec2* a, vec2* b) {
   // No SIMD intrinsics
   r.data[0] = a->data[0] - b->data[0];
   r.data[1] = a->data[1] - b->data[1];
+  r.data[2] = a->data[2] - b->data[2];
 #endif
   return r;
 }
 
-vec2 vec2_mul(vec2* a, vec2* b) {
-  vec2 r;
+vec3 vec3_mul(vec3* a, vec3* b) {
+  vec3 r;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   r.data = _mm_mul_ps(a->data, b->data);
@@ -172,12 +204,13 @@ vec2 vec2_mul(vec2* a, vec2* b) {
   // No SIMD intrinsics
   r.data[0] = a->data[0] * b->data[0];
   r.data[1] = a->data[1] * b->data[1];
+  r.data[2] = a->data[2] * b->data[2];
 #endif
   return r;
 }
 
-vec2 vec2_div(vec2* a, vec2* b) {
-  vec2 r;
+vec3 vec3_div(vec3* a, vec3* b) {
+  vec3 r;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   r.data = _mm_div_ps(a->data, b->data);
@@ -188,11 +221,12 @@ vec2 vec2_div(vec2* a, vec2* b) {
   // No SIMD intrinsics
   r.data[0] = a->data[0] / b->data[0];
   r.data[1] = a->data[1] / b->data[1];
+  r.data[2] = a->data[2] / b->data[2];
 #endif
   return r;
 }
 
-float vec2_mag(vec2* v) {
+float vec3_mag(vec3* v) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_mul_ps(v->data, v->data);
@@ -206,12 +240,13 @@ float vec2_mag(vec2* v) {
   // No SIMD intrinsics
   float x = v->data[0];
   float y = v->data[1];
-  return (float)sqrt(x * x + y * y);
+  float z = v->data[2];
+  return (float)sqrt(x * x + y * y + z * z);
 #endif
 }
 
-vec2 vec2_scale(vec2* a, float s) {
-  vec2 r;
+vec3 vec3_scale(vec3* a, float s) {
+  vec3 r;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_set_ps1(s);
@@ -223,12 +258,13 @@ vec2 vec2_scale(vec2* a, float s) {
   // No SIMD intrinsics
   r.data[0] = a->data[0] * s;
   r.data[1] = a->data[1] * s;
+  r.data[2] = a->data[2] * s;
 #endif
   return r;
 }
 
-vec2 vec2_norm(vec2* v) {
-  vec2 r;
+vec3 vec3_norm(vec3* v) {
+  vec3 r;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_mul_ps(v->data, v->data);
@@ -243,15 +279,17 @@ vec2 vec2_norm(vec2* v) {
   // No SIMD intrinsics
   float x = v->data[0];
   float y = v->data[1];
-  float mag = sqrt(x * x + y * y);
+  float z = v->data[2];
+  float mag = sqrt(x * x + y * y + z * z);
   r.data[0] = x / mag;
   r.data[1] = y / mag;
+  r.data[2] = z / mag;
   
 #endif
   return r;
 }
 
-float vec2_dist(vec2* a, vec2* b) {
+float vec3_dist(vec3* a, vec3* b) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_sub_ps(a->data, b->data);
@@ -267,7 +305,8 @@ float vec2_dist(vec2* a, vec2* b) {
   // No SIMD intrinsics
   float x = a->data[0] - b->data[0];
   float y = a->data[1] - b->data[1];
-  double mag = sqrt(x * x + y * y);
+  float z = a->data[2] - b->data[2];
+  double mag = sqrt(x * x + y * y + z * z);
   return (float)fabs(mag);
 #endif
 }

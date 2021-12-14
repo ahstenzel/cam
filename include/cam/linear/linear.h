@@ -8,5 +8,7 @@
 
 #include "cam/linear/linear_common.h"
 #include "cam/linear/vec2.h"
+#include "cam/linear/vec3.h"
+#include "cam/linear/vec4.h"
 
 #endif
