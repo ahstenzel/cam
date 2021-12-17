@@ -15,7 +15,7 @@ typedef struct {
   __m128 data;
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  float32x4_t data;
 #else
   // No SIMD intrinsics
   float data[4];

@@ -44,6 +44,7 @@
 
 #elif defined(CAM_ARCH_ARM) || defined(CAM_ARCH_ARM64) && !defined(CAM_LEGACY)
 # define CAM_SIMD_NEON
+#include <arm_neon.h>
 
 #else
 # define CAM_SIMD_NONE

@@ -1,11 +1,16 @@
 #include "cam/cam.h"
 #include <time.h>
 
-int main() {
-  vec4 v = vec4_make(1.0f, 2.0f, 3.0f, 4.0f);
-  v = vec4_scale(&v, 2.0f);
+void vec2_print(vec2 v) {
+  printf("(%.2f, %.2f)\n", vec2_getx(&v), vec2_gety(&v));
+}
 
-  printf("(%.2f, %.2f, %.2f, %.2f)", vec4_getx(&v), vec4_gety(&v), vec4_getz(&v), vec4_getw(&v));
+int main() {
+  vec2 v = vec2_make(1.0f, 1.0f);
+  vec2 u = vec2_make(1.0f, 2.0f);
+  vec2 w = vec2_norm(&v);
+
+  vec2_print(w);
 
   return 0;
 }

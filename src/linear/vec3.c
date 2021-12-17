@@ -12,7 +12,8 @@ vec3 vec3_make(float x, float y, float z) {
   v.data = _mm_set_ps(0.0f, z, y, x);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  float arr[4] = {x, y, z, 0.0f};
+  v.data = vld1q_f32(arr);
 #else
   // No SIMD intrinsics
   v->data[0] = x;
@@ -30,7 +31,7 @@ vec3 vec3_makez() {
   v.data = _mm_setzero_ps();
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  v.data = vmovq_n_f32(0.0f);
 #else
   // No SIMD intrinsics
   v->data[0] = 0.0f;
@@ -47,7 +48,7 @@ float vec3_getx(vec3* v) {
   return _mm_cvtss_f32(v->data);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  return vgetq_lane_f32(v->data, 0);
 #else
   // No SIMD intrinsics
   return v->data[0];
@@ -61,7 +62,7 @@ float vec3_gety(vec3* v) {
   return _mm_cvtss_f32(tmp);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  return vgetq_lane_f32(v->data, 1);
 #else
   // No SIMD intrinsics
   return v->data[1];
@@ -75,7 +76,7 @@ float vec3_getz(vec3* v) {
   return _mm_cvtss_f32(tmp);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  return vgetq_lane_f32(v->data, 2);
 #else
   // No SIMD intrinsics
   return v->data[2];
@@ -89,7 +90,7 @@ void vec3_setx(vec3* v, float x) {
   v->data = _mm_blend_ps(v->data, tmp, 0b0001);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  v->data = vsetq_lane_f32(x, v->data, 0);
 #else
   // No SIMD intrinsics
   v->data[0] = x;
@@ -103,7 +104,7 @@ void vec3_sety(vec3* v, float y) {
   v->data = _mm_blend_ps(v->data, tmp, 0b0010);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  v->data = vsetq_lane_f32(y, v->data, 1);
 #else
   // No SIMD intrinsics
   v->data[1] = y;
@@ -117,7 +118,7 @@ void vec3_setz(vec3* v, float z) {
   v->data = _mm_blend_ps(v->data, tmp, 0b0100);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  v->data = vsetq_lane_f32(z, v->data, 2);
 #else
   // No SIMD intrinsics
   v->data[2] = z;
@@ -132,7 +133,8 @@ bool vec3_equal(vec3* a, vec3* b) {
   return mask == 0xF;
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  uint32x4_t result = vceqq_f32(a->data, b->data);
+  return (vminvq_u32(result) != 0);
 #else
   // No SIMD intrinsics
   return (a->data[0] == b->data[0] && 
@@ -149,7 +151,8 @@ bool vec3_equalz(vec3* v) {
   return mask == 0xF;
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  uint32x4_t result = vceqzq_f32(v->data);
+  return (vminvq_u32(result) != 0);
 #else
   // No SIMD intrinsics
   return (v->data[0] == 0.0f && 
@@ -165,7 +168,7 @@ vec3 vec3_add(vec3* a, vec3* b) {
   r.data = _mm_add_ps(a->data, b->data);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  r.data = vaddq_f32(a->data, b->data);
 #else
   // No SIMD intrinsics
   r.data[0] = a->data[0] + b->data[0];
@@ -182,7 +185,7 @@ vec3 vec3_sub(vec3* a, vec3* b) {
   r.data = _mm_sub_ps(a->data, b->data);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  r.data = vsubq_f32(a->data, b->data);
 #else
   // No SIMD intrinsics
   r.data[0] = a->data[0] - b->data[0];
@@ -199,7 +202,7 @@ vec3 vec3_mul(vec3* a, vec3* b) {
   r.data = _mm_mul_ps(a->data, b->data);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  r.data = vmulq_f32(a->data, b->data);
 #else
   // No SIMD intrinsics
   r.data[0] = a->data[0] * b->data[0];
@@ -216,7 +219,7 @@ vec3 vec3_div(vec3* a, vec3* b) {
   r.data = _mm_div_ps(a->data, b->data);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  r.data = vdivq_f32(a->data, b->data);
 #else
   // No SIMD intrinsics
   r.data[0] = a->data[0] / b->data[0];
@@ -235,7 +238,9 @@ float vec3_mag(vec3* v) {
 
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  float32x4_t tmp = vmulq_f32(v->data, v->data);
+  tmp = vpaddq_f32(tmp, tmp);
+  return (float)sqrt(vgetq_lane_f32(tmp, 0));
 #else
   // No SIMD intrinsics
   float x = v->data[0];
@@ -253,7 +258,7 @@ vec3 vec3_scale(vec3* a, float s) {
   r.data = _mm_mul_ps(a->data, tmp);
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  r.data = vmulq_n_f32(a->data, s);
 #else
   // No SIMD intrinsics
   r.data[0] = a->data[0] * s;
@@ -274,7 +279,10 @@ vec3 vec3_norm(vec3* v) {
 
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  float32x4_t tmp = vmulq_f32(v->data, v->data);
+  tmp = vpaddq_f32(tmp, tmp);
+  float s = (float)sqrt(vgetq_lane_f32(tmp, 0));
+  r.data = vmulq_n_f32(v->data, 1.0f/s);
 #else
   // No SIMD intrinsics
   float x = v->data[0];
@@ -300,7 +308,11 @@ float vec3_dist(vec3* a, vec3* b) {
 
 #elif defined(CAM_SIMD_NEON)
   // AMD NEON
-
+  float32x4_t tmp = vsubq_f32(a->data, b->data);
+  tmp = vmulq_f32(tmp, tmp);
+  tmp = vpaddq_f32(tmp, tmp);
+  double mag = sqrt(vgetq_lane_f32(tmp, 0));
+  return (float)fabs(mag);
 #else
   // No SIMD intrinsics
   float x = a->data[0] - b->data[0];
