@@ -16,10 +16,10 @@ vec2 vec2_make(float x, float y) {
   v.data = vld1q_f32(arr);
 #else
   // No SIMD intrinsics
-  v->data[0] = x;
-  v->data[1] = y;
-  v->data[2] = 0.0f;
-  v->data[3] = 0.0f;
+  v.data[0] = x;
+  v.data[1] = y;
+  v.data[2] = 0.0f;
+  v.data[3] = 0.0f;
 #endif
   return v;
 }
@@ -34,10 +34,10 @@ vec2 vec2_makez() {
   v.data = vmovq_n_f32(0.0f);
 #else
   // No SIMD intrinsics
-  v->data[0] = 0.0f;
-  v->data[1] = 0.0f;
-  v->data[2] = 0.0f;
-  v->data[3] = 0.0f;
+  v.data[0] = 0.0f;
+  v.data[1] = 0.0f;
+  v.data[2] = 0.0f;
+  v.data[3] = 0.0f;
 #endif
   return v;
 }
@@ -100,7 +100,7 @@ void vec2_sety(vec2* v, float y) {
 bool vec2_equal(vec2* a, vec2* b) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  __m128 vcmp = _mm_cmp_ps(a->data, b->data, _CMP_EQ_OQ);
+  __m128 vcmp = _mm_cmpeq_ps(a->data, b->data);
   int mask = _mm_movemask_ps(vcmp);
   return mask == 0xF;
 #elif defined(CAM_SIMD_NEON)
@@ -117,7 +117,7 @@ bool vec2_equal(vec2* a, vec2* b) {
 bool vec2_equalz(vec2* v) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  __m128 vcmp = _mm_cmp_ps(v->data, _mm_setzero_ps(), _CMP_EQ_OQ);
+  __m128 vcmp = _mm_cmpeq_ps(v->data, _mm_setzero_ps());
   int mask = _mm_movemask_ps(vcmp);
   return mask == 0xF;
 #elif defined(CAM_SIMD_NEON)
@@ -198,8 +198,7 @@ vec2 vec2_div(vec2* a, vec2* b) {
 float vec2_mag(vec2* v) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  __m128 tmp = _mm_mul_ps(v->data, v->data);
-  tmp = _mm_hadd_ps(tmp, tmp);
+  __m128 tmp = _mm_dp_ps(v->data, v->data, 0xFF);
   return (float)sqrt(_mm_cvtss_f32(tmp));
 
 #elif defined(CAM_SIMD_NEON)
@@ -236,9 +235,9 @@ vec2 vec2_norm(vec2* v) {
   vec2 r;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  __m128 tmp = _mm_mul_ps(v->data, v->data);
-  tmp = _mm_hadd_ps(tmp, tmp);
+  __m128 tmp = _mm_dp_ps(v->data, v->data, 0xFF);
   tmp = _mm_sqrt_ps(tmp);
+  tmp = _mm_moveldup_ps(tmp);
   r.data = _mm_div_ps(v->data, tmp);
 
 #elif defined(CAM_SIMD_NEON)
@@ -263,8 +262,7 @@ float vec2_dist(vec2* a, vec2* b) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_sub_ps(a->data, b->data);
-  tmp = _mm_mul_ps(tmp, tmp);
-  tmp = _mm_hadd_ps(tmp, tmp);
+  tmp = _mm_dp_ps(tmp, tmp, 0xFF);
   double mag = sqrt(_mm_cvtss_f32(tmp));
   return (float)fabs(mag);
 

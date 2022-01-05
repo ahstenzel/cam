@@ -10,5 +10,6 @@
 #include "cam/linear/vec2.h"
 #include "cam/linear/vec3.h"
 #include "cam/linear/vec4.h"
+#include "cam/linear/mat2x2.h"
 
 #endif

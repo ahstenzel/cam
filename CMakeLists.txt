@@ -8,4 +8,7 @@ file(GLOB_RECURSE libsrc "src/*.c")
 #add_library(cam ${libsrc})
 add_executable(cam ${libsrc})
 target_include_directories(cam PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>")
-target_link_libraries(cam m)
+
+if (NOT WIN32)
+  target_link_libraries(cam m)
+endif()

@@ -11,8 +11,17 @@
 #include <stdbool.h>  // Boolean values
 #include <limits.h>   // Numeric limits
 #include <stdint.h>   // Regular sized integers
-#if defined(_MSC_VER)
-#include <intrin.h>   // CPU feature detection
+
+
+/* Detect compiler */
+#if defined(__clang__)
+# define CAM_CMP_CLANG
+#elif (defined(__GNUC__) || defined(__GNUG__)) && !defined(__INTEL_COMPILER)
+# define CAM_CMP_GCC
+#elif defined(_MSC_VER)
+# define CAM_CMP_MSVC
+#elif
+# define CAM_CMP_UNKNOWN
 #endif
 
 
@@ -37,12 +46,21 @@
 #endif
 
 
+/* Platform specific definitions */
+#if defined(CAM_CMP_MSVC)
+#include <intrin.h>   // CPU feature detection
+#endif
+#if defined(CAM_CMP_GCC) || defined(CAM_CMP_CLANG)
+#include <asm/i387.h>
+#endif
+
+
 /* SIMD Definitions */
-#if defined(CAM_ARCH_X86) || defined(CAM_ARCH_X64) && !defined(CAM_LEGACY)
+#if defined(CAM_ARCH_X86) || defined(CAM_ARCH_X64) && !defined(CAM_LEGACY) && !defined(CAM_CMP_UNKNOWN)
 # define CAM_SIMD_AVX
 #include <immintrin.h>
 
-#elif defined(CAM_ARCH_ARM) || defined(CAM_ARCH_ARM64) && !defined(CAM_LEGACY)
+#elif defined(CAM_ARCH_ARM) || defined(CAM_ARCH_ARM64) && !defined(CAM_LEGACY) && !defined(CAM_CMP_UNKNOWN)
 # define CAM_SIMD_NEON
 #include <arm_neon.h>
 

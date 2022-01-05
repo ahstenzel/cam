@@ -16,10 +16,10 @@ vec3 vec3_make(float x, float y, float z) {
   v.data = vld1q_f32(arr);
 #else
   // No SIMD intrinsics
-  v->data[0] = x;
-  v->data[1] = y;
-  v->data[2] = z;
-  v->data[3] = 0.0f;
+  v.data[0] = x;
+  v.data[1] = y;
+  v.data[2] = z;
+  v.data[3] = 0.0f;
 #endif
   return v;
 }
@@ -34,10 +34,10 @@ vec3 vec3_makez() {
   v.data = vmovq_n_f32(0.0f);
 #else
   // No SIMD intrinsics
-  v->data[0] = 0.0f;
-  v->data[1] = 0.0f;
-  v->data[2] = 0.0f;
-  v->data[3] = 0.0f;
+  v.data[0] = 0.0f;
+  v.data[1] = 0.0f;
+  v.data[2] = 0.0f;
+  v.data[3] = 0.0f;
 #endif
   return v;
 }
@@ -128,7 +128,7 @@ void vec3_setz(vec3* v, float z) {
 bool vec3_equal(vec3* a, vec3* b) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  __m128 vcmp = _mm_cmp_ps(a->data, b->data, _CMP_EQ_OQ);
+  __m128 vcmp = _mm_cmpeq_ps(a->data, b->data);
   int mask = _mm_movemask_ps(vcmp);
   return mask == 0xF;
 #elif defined(CAM_SIMD_NEON)
@@ -146,7 +146,7 @@ bool vec3_equal(vec3* a, vec3* b) {
 bool vec3_equalz(vec3* v) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  __m128 vcmp = _mm_cmp_ps(v->data, _mm_setzero_ps(), _CMP_EQ_OQ);
+  __m128 vcmp = _mm_cmpeq_ps(v->data, _mm_setzero_ps());
   int mask = _mm_movemask_ps(vcmp);
   return mask == 0xF;
 #elif defined(CAM_SIMD_NEON)
@@ -232,8 +232,7 @@ vec3 vec3_div(vec3* a, vec3* b) {
 float vec3_mag(vec3* v) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  __m128 tmp = _mm_mul_ps(v->data, v->data);
-  tmp = _mm_hadd_ps(tmp, tmp);
+  __m128 tmp = _mm_dp_ps(v->data, v->data, 0xFF);
   return (float)sqrt(_mm_cvtss_f32(tmp));
 
 #elif defined(CAM_SIMD_NEON)
@@ -272,8 +271,7 @@ vec3 vec3_norm(vec3* v) {
   vec3 r;
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
-  __m128 tmp = _mm_mul_ps(v->data, v->data);
-  tmp = _mm_hadd_ps(tmp, tmp);
+  __m128 tmp = _mm_dp_ps(v->data, v->data, 0xFF);
   tmp = _mm_sqrt_ps(tmp);
   r.data = _mm_div_ps(v->data, tmp);
 
@@ -301,8 +299,7 @@ float vec3_dist(vec3* a, vec3* b) {
 #if defined(CAM_SIMD_AVX)
   // Intel AVX
   __m128 tmp = _mm_sub_ps(a->data, b->data);
-  tmp = _mm_mul_ps(tmp, tmp);
-  tmp = _mm_hadd_ps(tmp, tmp);
+  tmp = _mm_dp_ps(tmp, tmp, 0xFF);
   double mag = sqrt(_mm_cvtss_f32(tmp));
   return (float)fabs(mag);
 
