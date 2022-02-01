@@ -9,6 +9,10 @@ file(GLOB_RECURSE libsrc "src/*.c")
 add_executable(cam ${libsrc})
 target_include_directories(cam PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>")
 
+# Add SIMD intrinsic switches
+target_compile_options(cam PRIVATE $<IF:$<BOOL:${MSVC}>,/arch:AVX2,-mavx2>)
+
+# Add platform specific libraries
 if (NOT WIN32)
   target_link_libraries(cam m)
 endif()

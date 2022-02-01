@@ -20,7 +20,7 @@ void mat2x2_print(mat2x2 m) {
 int main() {
   mat2x2 a = mat2x2_make(1.0f, 2.0f, 3.0f, 4.0f);
   float d = mat2x2_det(&a);
-  printf("%.2f", d);
+  printf("%.2f\n", d);
 
   return 0;
 }

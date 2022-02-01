@@ -14,7 +14,7 @@
 *.userprefs
 
 # Build results
-out/
+out/build/
 .cmake/
 CMakeFiles/
 isenseconfig/

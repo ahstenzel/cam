@@ -51,7 +51,7 @@
 #include <intrin.h>   // CPU feature detection
 #endif
 #if defined(CAM_CMP_GCC) || defined(CAM_CMP_CLANG)
-#include <asm/i387.h>
+//#include <asm/i387.h>
 #endif
 
 
