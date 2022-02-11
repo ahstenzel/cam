@@ -1,6 +1,6 @@
 /*
  * vec4.c
- * Declaration for 3D vector of floats.
+ * Declaration for 4D vector of floats.
  */
 
 #include "cam/linear/vec4.h"
@@ -93,7 +93,7 @@ float vec4_getw(vec4* v) {
   return vgetq_lane_f32(v->data, 3);
 #else
   // No SIMD intrinsics
-  return v->data[2];
+  return v->data[3];
 #endif
 }
 

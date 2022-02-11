@@ -1,10 +1,10 @@
 /*
  * vec3.h
- * Declaration for 2D vector of floats.
+ * Declaration for 3D vector of floats.
  */
 
-#ifndef CAM_LINEAR_vec3_H
-#define CAM_LINEAR_vec3_H
+#ifndef CAM_LINEAR_VEC3_H
+#define CAM_LINEAR_VEC3_H
 
 #include "cam/linear/linear_common.h"
 
