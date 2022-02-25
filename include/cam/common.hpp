@@ -1,17 +1,14 @@
+#pragma once
 /*
- * common.h
+ * common.hpp
  * Common definitions and inclusions across the project.
  */
 
-#ifndef CAM_COMMON_H
-#define CAM_COMMON_H
-
 /* Standard library includes */
-#include <stdio.h>    // Console IO
-#include <stdbool.h>  // Boolean values
-#include <limits.h>   // Numeric limits
-#include <stdint.h>   // Regular sized integers
-
+#include <stdexcept>
+#include <utility>
+#include <type_traits>
+#include <iterator>
 
 /* Detect compiler */
 #if defined(__clang__)
@@ -59,7 +56,7 @@
 
 #elif defined(CAM_ARCH_ARM) || defined(CAM_ARCH_ARM64) && !defined(CAM_LEGACY) && !defined(CAM_CMP_UNKNOWN)
 # define CAM_SIMD_NEON
-#include <arm_neon.h>
+#include <arm_neon.hpp>
 
 #else
 # define CAM_SIMD_NONE
@@ -73,7 +70,7 @@
 #ifdef _USE_MATH_DEFINES
 #undef _USE_MATH_DEFINES
 #endif
-#include <math.h>         // Standard trig functions
+#include <cmath>         // Standard trig functions
 
 // Math constants
 #define C_E        2.71828182845904523536   // e
@@ -92,7 +89,7 @@
 #define degtorad(a) (a * (C_PI / 180.0))
 #else
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 #endif
 
 
@@ -105,7 +102,4 @@
 #endif
 #else
 #define CAM_API
-#endif
-
-
 #endif
