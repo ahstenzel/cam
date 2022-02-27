@@ -4,6 +4,7 @@
  */
 
 #include "cam/linear/vec2.hpp"
+#include <iostream>
 
 namespace cam {
   vec2::vec2(float x, float y) :
@@ -107,9 +108,9 @@ namespace cam {
     return rhs;
   }
 
-  float& vec2::x()              { return data_[0]; }
+  float& vec2::x()              { mag_ = -1.0f; return data_[0]; }
   const float& vec2::x() const  { return data_[0]; }
-  float& vec2::y()              { return data_[1]; }
+  float& vec2::y()              { mag_ = -1.0f; return data_[1]; }
   const float& vec2::y() const  { return data_[1]; }
 
   float vec2::magnitude() { 
@@ -131,5 +132,17 @@ namespace cam {
     return v;
   }
 
+  float vec2::sum() {
+    return (data_[0] + data_[1]);
+  }
+
   const vec2 vec2::zero = vec2();
+
+  vec2 vec2::distance(const vec2& a, const vec2& b) {
+    return (b - a).magnitude();
+  }
+
+  float vec2::dot_product(const vec2& a, const vec2& b) {
+    return (a * b).sum();
+  }
 }

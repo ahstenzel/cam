@@ -9,5 +9,10 @@ int main() {
     std::cout << "id" << std::endl;
   }
   std::cout << m.determinant() << std::endl;
+
+  cam::vec2 g;
+  std::cout << g.magnitude() << std::endl;
+  g.x() = 1.0f;
+  std::cout << g.magnitude() << std::endl;
   return 0;
 }

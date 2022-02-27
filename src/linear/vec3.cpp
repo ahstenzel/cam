@@ -114,11 +114,11 @@ namespace cam {
     return rhs;
   }
 
-  float& vec3::x()              { return data_[0]; }
+  float& vec3::x()              { mag_ = -1.0f; return data_[0]; }
   const float& vec3::x() const  { return data_[0]; }
-  float& vec3::y()              { return data_[1]; }
+  float& vec3::y()              { mag_ = -1.0f; return data_[1]; }
   const float& vec3::y() const  { return data_[1]; }
-  float& vec3::z()              { return data_[2]; }
+  float& vec3::z()              { mag_ = -1.0f; return data_[2]; }
   const float& vec3::z() const  { return data_[2]; }
 
   float vec3::magnitude() { 
@@ -140,17 +140,25 @@ namespace cam {
     return v;
   }
 
-  float dot_product(const vec3& a, const vec3& b) {
-    return (a.x() * b.x()) + (a.y() * b.y()) + (a.z() * b.z());
-  }
-
-  vec3 cross_product(const vec3& a, const vec3& b) {
-    vec3 v;
-    v.x() = (a.y() * b.z()) - (a.z() - b.y());
-    v.y() = (a.z() * b.x()) - (a.x() - b.z());
-    v.z() = (a.x() * b.y()) - (a.y() - b.x());
-    return v;
+  float vec3::sum() {
+    return (data_[0] + data_[1] + data_[2]);
   }
 
   const vec3 vec3::zero = vec3();
+
+  vec3 vec3::distance(const vec3& a, const vec3& b) {
+    return (b - a).magnitude();
+  }
+
+  float vec3::dot_product(const vec3& a, const vec3& b) {
+    return (a * b).sum();
+  }
+
+  vec3 vec3::cross_product(const vec3& a, const vec3& b) {
+    return vec3(
+      (a.data_[1] * b.data_[2]) - (a.data_[2] - b.data_[1]),
+      (a.data_[2] * b.data_[0]) - (a.data_[0] - b.data_[2]),
+      (a.data_[0] * b.data_[1]) - (a.data_[1] - b.data_[0])
+    );
+  }
 }

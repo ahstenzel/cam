@@ -7,7 +7,7 @@
 
 namespace cam {
   mat2::mat2(float x1, float y1, float x2, float y2) :
-    data_{x1, y1, x2, y2}, det_(nanf("")) 
+    data_{x1, y1, x2, y2}, det_(NAN) 
     {}
 
   mat2::mat2(const mat2& copy) :
@@ -15,7 +15,7 @@ namespace cam {
     {}
 
   mat2::mat2(mat2&& move) noexcept :
-    data_{0.0f, 0.0f, 0.0f, 0.0f}, det_(nanf("")) {
+    data_{0.0f, 0.0f, 0.0f, 0.0f}, det_(NAN) {
       move.swap(*this);
     }
 
@@ -47,7 +47,7 @@ namespace cam {
     data_[1] += rhs.data_[1];
     data_[2] += rhs.data_[2];
     data_[3] += rhs.data_[3];
-    det_ = nanf("");
+    det_ = NAN;
     return *this;
   }
   mat2 operator+(mat2 lhs, const mat2& rhs) {
@@ -59,7 +59,7 @@ namespace cam {
     data_[1] -= rhs.data_[1];
     data_[2] -= rhs.data_[2];
     data_[3] -= rhs.data_[3];
-    det_ = nanf("");
+    det_ = NAN;
     return *this;
   }
   mat2 operator-(mat2 lhs, const mat2& rhs) {
@@ -72,7 +72,7 @@ namespace cam {
 
     data_[2] = (data_[0]*rhs.data_[2]) + (data_[2]*rhs.data_[3]);
     data_[3] = (data_[1]*rhs.data_[2]) + (data_[3]*rhs.data_[3]);
-    det_ = nanf("");
+    det_ = NAN;
     return *this;
   }
   mat2 operator*(mat2 lhs, const mat2& rhs) {
@@ -84,7 +84,7 @@ namespace cam {
     data_[1] *= rhs;
     data_[2] *= rhs;
     data_[3] *= rhs;
-    det_ = nanf("");
+    det_ = NAN;
     return *this;
   }
   mat2 operator*(mat2 lhs, const float& rhs) {
@@ -96,13 +96,13 @@ namespace cam {
     return lhs;
   }
   vec2 operator*(mat2 lhs, const vec2& rhs) {
-    vec2 v;
-    v.x() = (lhs.data_[0] * rhs.x()) + (lhs.data_[2] * rhs.y());
-    v.y() = (lhs.data_[1] * rhs.x()) + (lhs.data_[3] * rhs.y());
-    return v;
+    return vec2(
+      (lhs.data_[0] * rhs.x()) + (lhs.data_[2] * rhs.y()),
+      (lhs.data_[1] * rhs.x()) + (lhs.data_[3] * rhs.y())
+    );
   }
 
-  float& mat2::at(std::size_t row, std::size_t col)             { return data_[(col * 2) + row]; }
+  float& mat2::at(std::size_t row, std::size_t col)             { det_ = NAN; return data_[(col * 2) + row]; }
   const float& mat2::at(std::size_t row, std::size_t col) const { return data_[(col * 2) + row] ; }
 
   float mat2::determinant() {

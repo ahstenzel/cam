@@ -68,7 +68,16 @@ namespace cam {
     // Normalize this vector
     vec4 normalize();
 
+    // Sum all the components of the vector
+    float sum();
+
     // Zero vector
     const static vec4 zero;
+
+    // Calculate the distance between two vectors
+    static vec4 distance(const vec4& a, const vec4& b);
+
+    // Calculate the dot product of two vectors
+    static float dot_product(const vec4& a, const vec4& b);
   };
 }

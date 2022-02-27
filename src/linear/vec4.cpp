@@ -122,13 +122,13 @@ namespace cam {
     return rhs;
   }
 
-  float& vec4::x()              { return data_[0]; }
+  float& vec4::x()              { mag_ = -1.0f; return data_[0]; }
   const float& vec4::x() const  { return data_[0]; }
-  float& vec4::y()              { return data_[1]; }
+  float& vec4::y()              { mag_ = -1.0f; return data_[1]; }
   const float& vec4::y() const  { return data_[1]; }
-  float& vec4::z()              { return data_[2]; }
+  float& vec4::z()              { mag_ = -1.0f; return data_[2]; }
   const float& vec4::z() const  { return data_[2]; }
-  float& vec4::w()              { return data_[3]; }
+  float& vec4::w()              { mag_ = -1.0f; return data_[3]; }
   const float& vec4::w() const  { return data_[3]; }
 
   float vec4::magnitude() { 
@@ -151,5 +151,17 @@ namespace cam {
     return v;
   }
 
+  float vec4::sum() {
+    return (data_[0] + data_[1] + data_[2] + data_[3]);
+  }
+
   const vec4 vec4::zero = vec4();
+
+  vec4 vec4::distance(const vec4& a, const vec4& b) {
+    return (b - a).magnitude();
+  }
+
+  float vec4::dot_product(const vec4& a, const vec4& b) {
+    return (a * b).sum();
+  }
 }

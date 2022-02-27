@@ -66,11 +66,19 @@ namespace cam {
     // Normalize this vector
     vec3 normalize();
 
+    // Sum all the components of the vector
+    float sum();
+
     // Zero vector
     const static vec3 zero;
+
+    // Calculate the distance between two vectors
+    static vec3 distance(const vec3& a, const vec3& b);
+
+    // Calculate the dot product of two vectors
+    static float dot_product(const vec3& a, const vec3& b);
+
+    // Calculate the cross product of two vectors
+    static vec3 cross_product(const vec3& a, const vec3& b);
   };
-
-  float dot_product(const vec3& a, const vec3& b);
-
-  vec3 cross_product(const vec3& a, const vec3& b);
 }

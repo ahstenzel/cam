@@ -77,7 +77,7 @@ namespace cam {
 
     vec3 direc = (pos - target).normalize();
     vec3 right = (up - direc).normalize();
-    vec3 camUp = cross_product(direc, right);
+    vec3 camUp = vec3::cross_product(direc, right);
 
     t1.at(0, 0) = right.x();
     t1.at(0, 1) = camUp.x();
