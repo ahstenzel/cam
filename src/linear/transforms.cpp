@@ -7,7 +7,7 @@
 #include "cam/linear/transforms.hpp"
 
 namespace cam {
-  mat4 matrix_translate(vec3 v) {
+  mat4 matrix_translate(const vec3& v) {
     return mat4(
       1.0f, 0.0f, 0.0f, 0.0f,
       0.0f, 1.0f, 0.0f, 0.0f,
@@ -16,7 +16,7 @@ namespace cam {
     );
   }
   
-  mat4 matrix_rotate(float a, vec3 v) {
+  mat4 matrix_rotate(float a, const vec3& v) {
     mat4 m;
     float c = (float)cos(a);
     float s = (float)sin(a);
@@ -39,7 +39,7 @@ namespace cam {
     return m;
   }
   
-  mat4 matrix_scale(vec3 v) {
+  mat4 matrix_scale(const vec3& v) {
     return mat4(
       v.x(), v.y(), v.z(), 0.0f,
       0.0f, 1.0f, 0.0f, 0.0f,
@@ -71,7 +71,7 @@ namespace cam {
     );
   }
 
-  mat4 matrix_lookat(vec3 pos, vec3 target, vec3 up) {
+  mat4 matrix_lookat(const vec3& pos, const vec3& target, const vec3& up) {
     mat4 t1;
     mat4 t2 = matrix_translate(pos * -1.0f);
 
